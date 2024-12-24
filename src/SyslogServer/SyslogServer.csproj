@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+		<TargetFrameworks>net6.0;net8.0</TargetFrameworks>
 		<Version>2.0.0</Version>
 		<Authors>Joel Christner</Authors>
 		<Company>Joel Christner</Company>
@@ -29,14 +29,6 @@
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
-		<WarningLevel>4</WarningLevel>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0|AnyCPU'">
-		<WarningLevel>4</WarningLevel>
-	</PropertyGroup>
-
 	<ItemGroup>
 		<Content Include="assets\logo.ico">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -46,8 +38,7 @@
 	<ItemGroup>
 		<PackageReference Include="Inputty" Version="1.0.12" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-		<PackageReference Include="SerializationHelper" Version="2.0.0" />
-		<PackageReference Include="System.Text.Json" Version="8.0.4" />
+		<PackageReference Include="SerializationHelper" Version="2.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
