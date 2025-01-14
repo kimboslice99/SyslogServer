@@ -11,6 +11,8 @@
     using System.Threading;
     using System.Threading.Tasks;
     using SerializationHelper;
+    using System.Security.Cryptography.X509Certificates;
+    using System.Net.Security;
 
     /// <summary>
     /// Syslog server.
@@ -28,6 +30,7 @@
         private static Settings _Settings = new Settings();
         private static Thread _ListenerThread;
         private static UdpClient _ListenerUdp;
+        private static TcpListener _TcpListener;
         private static DateTime _LastWritten = DateTime.Now;
 
         private static string _SettingsFile = "syslog.json";
@@ -85,6 +88,12 @@
             _ListenerThread.Start();
             Console.WriteLine("Listening on UDP/" + _Settings.UdpPort + ".");
 
+            // Start TCP listener for TLS
+            _TcpListener = new TcpListener(IPAddress.Any, _Settings.TlsPort);
+            _TcpListener.Start();
+            Console.WriteLine("Listening on TLS/TCP/" + _Settings.TlsPort + ".");
+
+            Task.Run(() => TcpListenerTask());
             Task.Run(() => WriterTask());
             Console.WriteLine("Writer thread started successfully");
         }
@@ -172,6 +181,57 @@
                     Environment.Exit(-1);
                 }
             }
+        }
+
+        private static void TcpListenerTask()
+        {
+            X509Certificate2 serverCertificate = new X509Certificate2(_Settings.CertificatePath, _Settings.CertificatePassword);
+
+            while (true)
+            {
+                try
+                {
+                    TcpClient client = _TcpListener.AcceptTcpClient();
+                    Task.Run(() => HandleClient(client, serverCertificate));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error accepting TCP client: " + ex.Message);
+                }
+            }
+        }
+
+        private static void HandleClient(TcpClient client, X509Certificate2 serverCertificate)
+        {
+            using (SslStream sslStream = new SslStream(client.GetStream(), false))
+            {
+                try
+                {
+                    sslStream.AuthenticateAsServer(serverCertificate, clientCertificateRequired: false, enabledSslProtocols: System.Security.Authentication.SslProtocols.Tls12, checkCertificateRevocation: true);
+
+                    using (StreamReader reader = new StreamReader(sslStream, Encoding.UTF8))
+                    {
+                        while (client.Connected)
+                        {
+                            string receivedData = reader.ReadLine();
+                            if (receivedData != null)
+                            {
+                                string msg = (_Settings.DisplayTimestamps ? DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss") + " " : "") + receivedData;
+                                Console.WriteLine(msg);
+
+                                lock (_WriterLock)
+                                    _MessageQueue.Add(msg);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("TLS client handling error: " + ex.Message);
+                }
+            }
+
+            client.Close();
         }
 
         #endregion

@@ -20,3 +20,10 @@ Build/compile and run the binary.
 ## Running in Docker
 
 Refer to the `docker` directory.  A build called `jchristn/syslogserver` has been stored on [Docker Hub](https://hub.docker.com/r/jchristn/syslogserver).  Refer to the `docker` directory for sample deployment.
+
+## Build TLS cert
+```
+openssl genrsa 2048 > private.pem
+openssl req -x509 -new -key private.pem -out public.pem
+openssl pkcs12 -export -in public.pem -inkey private.pem -out mycert.pfx
+```
