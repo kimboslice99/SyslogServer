@@ -53,6 +53,11 @@
         public string CertificatePassword { get; set; } = "";
 
         /// <summary>
+        /// Require client certificate for tls port
+        /// </summary>
+        public bool AuthRequired { get; set; } = false;
+
+        /// <summary>
         /// Flag to enable or disable displaying timestamps.
         /// </summary>
         public bool DisplayTimestamps { get; set; } = false;
@@ -87,6 +92,7 @@
 
         #region Private-Members
 
+        private bool _RequireAuth = false;
         private int _UdpPort = 514;
         private int _TlsPort = 6514;
         private int _LogWriterIntervalSec = 10;

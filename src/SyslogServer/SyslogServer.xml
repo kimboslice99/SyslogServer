@@ -29,6 +29,11 @@
             The password for the certificate
             </summary>
         </member>
+        <member name="P:Syslog.Settings.AuthRequired">
+            <summary>
+            Require client certificate for tls port
+            </summary>
+        </member>
         <member name="P:Syslog.Settings.DisplayTimestamps">
             <summary>
             Flag to enable or disable displaying timestamps.

@@ -6,7 +6,11 @@ Syslog Server will automatically start using a default configuration listening o
 ```
 {
   "UdpPort": 514,
-  "DisplayTimestamps": true,
+  "TlsPort": 6514,
+  "CertificatePath": "mycert.pfx",
+  "CertificatePassword": "",
+  "AuthRequired": false,
+  "DisplayTimestamps": false,
   "LogFileDirectory": "./logs/",
   "LogFilename": "log.txt",
   "LogWriterIntervalSec": 10

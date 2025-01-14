@@ -207,7 +207,7 @@
             {
                 try
                 {
-                    sslStream.AuthenticateAsServer(serverCertificate, clientCertificateRequired: false, enabledSslProtocols: System.Security.Authentication.SslProtocols.Tls12, checkCertificateRevocation: true);
+                    sslStream.AuthenticateAsServer(serverCertificate, clientCertificateRequired: _Settings.AuthRequired, enabledSslProtocols: System.Security.Authentication.SslProtocols.Tls12, checkCertificateRevocation: true);
 
                     using (StreamReader reader = new StreamReader(sslStream, Encoding.UTF8))
                     {
